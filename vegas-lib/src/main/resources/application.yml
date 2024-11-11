@@ -1,7 +1,7 @@
 concurrency:
   limits:
     default:
-      initialLimit: 150
+      initialLimit: 2
     limiters:
       processRequestLimiter: 100
       anotherLimiter: 50
