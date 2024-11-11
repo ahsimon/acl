@@ -1,0 +1,13 @@
+concurrency:
+  limits:
+    default:
+      initialLimit: 2
+    limiters:
+      processRequestLimiter: 1
+      anotherLimiter: 50
+server:
+  port: 9090
+
+logging:
+  level:
+    com.demo.lasvegas: "info"
