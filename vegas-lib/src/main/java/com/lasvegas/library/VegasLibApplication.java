@@ -1,4 +1,5 @@
-package com.lasvegas.lib;
+package com.lasvegas.library;
+
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -6,8 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class VegasLibApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(VegasLibApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(VegasLibApplication.class, args);
+    }
 
 }

@@ -1,4 +1,4 @@
-package com.lasvegas.lib.annotation;
+package com.lasvegas.library.annotation;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import java.util.Map;

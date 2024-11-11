@@ -1,4 +1,4 @@
-package com.lasvegas.lib.annotation;
+package com.lasvegas.library.annotation;
 import com.netflix.concurrency.limits.Limit;
 import com.netflix.concurrency.limits.Limiter;
 import com.netflix.concurrency.limits.limit.AbstractLimit;
