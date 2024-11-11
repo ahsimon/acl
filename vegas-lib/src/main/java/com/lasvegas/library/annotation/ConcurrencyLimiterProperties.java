@@ -1,10 +1,11 @@
 package com.lasvegas.library.annotation;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import java.util.Map;
 @Component
 @ConfigurationProperties(prefix = "concurrency.limits")
-public class ConcurrencyLimitProperties {
+public class ConcurrencyLimiterProperties {
 
     private DefaultLimit defaultLimit = new DefaultLimit();
     private Map<String, Integer> limiters;
@@ -35,5 +36,10 @@ public class ConcurrencyLimitProperties {
         public void setInitialLimit(int initialLimit) {
             this.initialLimit = initialLimit;
         }
+    }
+
+    @Bean
+    public ConcurrencyLimiterProperties concurrencyLimitProperties() {
+        return this;
     }
 }
