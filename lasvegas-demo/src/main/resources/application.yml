@@ -6,7 +6,7 @@ concurrency:
       processRequestLimiter: 1
       anotherLimiter: 50
 server:
-  port: 9090
+  port: 9080
 
 logging:
   level:
