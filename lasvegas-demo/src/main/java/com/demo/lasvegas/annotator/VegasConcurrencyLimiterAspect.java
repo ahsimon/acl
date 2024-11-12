@@ -1,5 +1,5 @@
 package com.demo.lasvegas.annotator;
-import com.demo.lasvegas.annotator.fallback.FallbackExecutor;
+
 
 import com.demo.lasvegas.annotator.spelresolver.SpelResolver;
 import com.netflix.concurrency.limits.Limiter;
@@ -11,13 +11,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Mono;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.concurrent.CompletionStage;
 import java.lang.reflect.Method;
 
 @Aspect
@@ -69,28 +63,28 @@ public class VegasConcurrencyLimiterAspect {
                 return result;
             } catch (Throwable throwable) {
                 listener.onDropped();
-                return invokeFallback(joinPoint, vegasConcurrencyLimiter.fallbackMethod());
+                return invokeFallback(joinPoint, vegasConcurrencyLimiter.fallbackMethod(), throwable);
             }
-        } else {
-            return invokeFallback(joinPoint, vegasConcurrencyLimiter.fallbackMethod());
         }
+
+        return joinPoint.proceed();
     }
 
-    private Object invokeFallback(ProceedingJoinPoint joinPoint, String fallbackMethodName) throws Throwable {
+    private Object invokeFallback(ProceedingJoinPoint joinPoint, String fallbackMethodName, Throwable throwable) throws Throwable {
 
         try {
             if (fallbackMethodName == null || fallbackMethodName.isEmpty()) {
                 logger.warn("No fallback method provided.");
-                return joinPoint.proceed();
+                throw throwable;
             }
 
             Object target = joinPoint.getTarget();
             Method fallbackMethod = target.getClass().getMethod(fallbackMethodName);
 
             return fallbackMethod.invoke(target);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logger.error("Error invoking acl fallback method: {}", fallbackMethodName, e);
-            throw new RuntimeException("Fallback method invocation failed", e);
+            throw e;
         }
     }
 
