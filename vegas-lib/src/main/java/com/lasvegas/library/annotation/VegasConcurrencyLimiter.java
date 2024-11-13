@@ -5,8 +5,7 @@ import java.lang.annotation.*;
 @Retention(value = RetentionPolicy.RUNTIME)
 @Target(value = {ElementType.METHOD, ElementType.TYPE})
 @Documented
-public @interface ConcurrencyLimiter {
-    int initialLimit() default 100;
-    String name() default "";
+public @interface VegasConcurrencyLimiter {
+    String name() default "default";
     String fallbackMethod() default "";
 }

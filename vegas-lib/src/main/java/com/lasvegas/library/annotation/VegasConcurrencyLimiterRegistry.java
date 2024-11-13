@@ -1,15 +1,15 @@
-package com.demo.lasvegas.annotator;
+package com.lasvegas.library.annotation;
 
 
-import com.demo.lasvegas.annotator.configure.VegasConcurrencyConfig;
+import com.lasvegas.library.annotation.configure.VegasConcurrencyConfig;
 import com.netflix.concurrency.limits.limit.VegasLimit;
 
 import com.netflix.concurrency.limits.limiter.SimpleLimiter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 
+import org.springframework.context.annotation.Configuration;
 
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -39,9 +39,9 @@ public class VegasConcurrencyLimiterRegistry {
 
 
         VegasLimit vegasLimit = VegasLimit.newBuilder()
-                    .initialLimit(config.getInitialLimit())
-                    .maxConcurrency(config.getMaxConcurrency())
-                    .build();
+                .initialLimit(config.getInitialLimit())
+                .maxConcurrency(config.getMaxConcurrency())
+                .build();
 
         // Build and return the SimpleLimiter with the configured Vegas limit
         return SimpleLimiter.newBuilder()

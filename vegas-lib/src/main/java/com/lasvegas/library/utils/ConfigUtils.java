@@ -1,7 +1,6 @@
-package com.demo.lasvegas.annotator.utils;
+package com.lasvegas.library.utils;
 
-
-import com.demo.lasvegas.annotator.VegasConcurrencyLimiterProperties;
+import com.lasvegas.library.annotation.VegasConcurrencyLimiterProperties;
 
 public class ConfigUtils {
 

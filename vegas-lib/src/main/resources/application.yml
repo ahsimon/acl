@@ -1,7 +1,8 @@
-concurrency:
-  limits:
+concurrency.vegas:
+  configs:
     default:
       initialLimit: 2
-    limiters:
-      processRequestLimiter: 100
-      anotherLimiter: 50
+      alpha: 3
+      beta: 6
+      smoothing: 1.0
+      maxConcurrency: 10

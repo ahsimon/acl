@@ -1,4 +1,4 @@
-package com.lasvegas.library.annotation.utils;
+package com.lasvegas.library.utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,19 +1,16 @@
-package com.demo.lasvegas.annotator;
-
-import com.demo.lasvegas.annotator.configure.VegasConcurrencyConfig;
-import com.demo.lasvegas.annotator.utils.ConfigUtils;
-import com.demo.lasvegas.exception.ConfigurationNotFoundException;
+package com.lasvegas.library.annotation;
+import com.lasvegas.library.annotation.configure.VegasConcurrencyConfig;
+import com.lasvegas.library.exception.ConfigurationNotFoundException;
+import com.lasvegas.library.utils.ConfigUtils;
 import io.micrometer.common.util.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.demo.lasvegas.annotator.configure.VegasConcurrencyConfig.custom;
-import static com.demo.lasvegas.annotator.configure.VegasConcurrencyConfig.from;
-
+import static com.lasvegas.library.annotation.configure.VegasConcurrencyConfig.custom;
+import static com.lasvegas.library.annotation.configure.VegasConcurrencyConfig.from;
 @Component
 @ConfigurationProperties(prefix = "concurrency.vegas")
 public class VegasConcurrencyLimiterProperties {
@@ -106,7 +103,7 @@ public class VegasConcurrencyLimiterProperties {
 
 
     public VegasConcurrencyConfig createVegasConcurrencyConfig(String instanceName,
-                                                          InstanceProperties instanceProperties) {
+                                                               InstanceProperties instanceProperties) {
 
         VegasConcurrencyConfig baseConfig = null;
         if (instanceProperties != null && StringUtils.isNotEmpty(instanceProperties.getBaseConfig())) {
@@ -121,7 +118,7 @@ public class VegasConcurrencyLimiterProperties {
     }
 
     private VegasConcurrencyConfig createBaseConfig(String instanceName,
-                                                  InstanceProperties instanceProperties) {
+                                                    InstanceProperties instanceProperties) {
 
         String baseConfigName = instanceProperties.getBaseConfig();
         if (instanceName.equals(baseConfigName)) {

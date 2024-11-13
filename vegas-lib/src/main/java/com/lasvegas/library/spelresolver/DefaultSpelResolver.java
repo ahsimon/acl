@@ -1,4 +1,5 @@
-package com.demo.lasvegas.annotator.spelresolver;
+package com.lasvegas.library.spelresolver;
+
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.core.ParameterNameDiscoverer;
