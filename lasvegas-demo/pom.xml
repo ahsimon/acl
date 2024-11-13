@@ -17,12 +17,14 @@
 	<properties>
 		<java.version>17</java.version>
 	</properties>
+
+
 	<dependencies>
-		<!--dependency>
+		<dependency>
 			<groupId>com.lasvegas.library</groupId>
 			<artifactId>vegas-lib</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-		</dependency-->
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-aop</artifactId>
@@ -36,12 +38,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webflux</artifactId>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.netflix.concurrency-limits/concurrency-limits-core -->
-		<dependency>
-			<groupId>com.netflix.concurrency-limits</groupId>
-			<artifactId>concurrency-limits-core</artifactId>
-			<version>0.5.2</version>
-		</dependency>
+
 
 		<dependency>
 			<groupId>io.micrometer</groupId>

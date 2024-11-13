@@ -1,6 +1,6 @@
 package com.demo.lasvegas.controller;
 
-import com.demo.lasvegas.annotator.VegasConcurrencyLimiter;
+import com.lasvegas.library.annotation.VegasConcurrencyLimiter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
@@ -15,13 +15,13 @@ public class AnnotatedConcurrencyLimiterController {
 
 
     @GetMapping("/test")
-    @VegasConcurrencyLimiter
+    @VegasConcurrencyLimiter(name = "default", fallbackMethod = "fallbackResponse")
     public Mono<ResponseEntity<String>> processRequest() {
         long initTime = System.currentTimeMillis();
 
 
         return Mono.fromCallable(() -> {
-            Thread.sleep(50); // Simulate delay
+            Thread.sleep(1000); // Simulate delay
             long executionTime = System.currentTimeMillis() - initTime;
 
             return ResponseEntity.ok("Request processed ok!! in " + executionTime);

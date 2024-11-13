@@ -9,13 +9,13 @@ import org.aspectj.lang.annotation.Around;
 
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 
 
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 
@@ -29,6 +29,7 @@ import java.util.Optional;
 @Component
 public class VegasConcurrencyLimiterAspect {
     private static final Logger logger = LoggerFactory.getLogger(VegasConcurrencyLimiterAspect.class);
+
     private final SpelResolver spelResolver;
     private final VegasConcurrencyLimiterRegistry concurrencyLimiterRegistry;
 
@@ -60,7 +61,7 @@ public class VegasConcurrencyLimiterAspect {
 
         // Obtain the limiter for the resolved backend
         SimpleLimiter<Void> limiter = concurrencyLimiterRegistry.getLimiter(backend);
-        logger.info("limiter adaptative limit {}", limiter.getLimit());
+        logger.info("Vegas adaptative limiter: current limit:{} ", limiter.getLimit());
         // Acquire a listener from the limiter
         Optional<Limiter.Listener> listener = limiter.acquire(null);
         // Proceed with the method execution if listener is present
@@ -87,7 +88,7 @@ public class VegasConcurrencyLimiterAspect {
     private Object invokeFallback(ProceedingJoinPoint joinPoint, String fallbackMethodName, Throwable throwable) throws Throwable {
         // Check if the fallback method name is provided
         if (fallbackMethodName == null || fallbackMethodName.isEmpty()) {
-            logger.warn("No fallback method provided. Throwing original exception.");
+           // logger.warn("No fallback method provided. Throwing original exception.");
             throw throwable;
         }
 
@@ -100,11 +101,11 @@ public class VegasConcurrencyLimiterAspect {
             return fallbackMethod.invoke(target);
         } catch (NoSuchMethodException e) {
             // Log specific error for method not found
-            logger.error("Fallback method not found: {} on target: {}", fallbackMethodName, joinPoint.getTarget().getClass().getName(), e);
+            //logger.error("Fallback method not found: {} on target: {}", fallbackMethodName, joinPoint.getTarget().getClass().getName(), e);
             throw new UnsupportedOperationException("Fallback method not found: " + fallbackMethodName, e);
         } catch (IllegalAccessException | InvocationTargetException e) {
             // Log errors related to method invocation issues
-            logger.error("Error invoking fallback method: {}", fallbackMethodName, e);
+            //logger.error("Error invoking fallback method: {}", fallbackMethodName, e);
             throw e.getCause() != null ? e.getCause() : e; // Throw the original cause of the exception
         }
     }
