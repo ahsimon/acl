@@ -22,7 +22,7 @@ public class ConcurrencyLimitController {
     public ConcurrencyLimitController() {
     // Initialize the VegasLimit for concurrency control
          vegasLimit = VegasLimit.newBuilder()
-                                             .initialLimit(2).alpha(3).beta(6).maxConcurrency(100)
+                                             .initialLimit(2).alpha(3).beta(6).maxConcurrency(10)
                                              .build();
         // Create a limiter instance
 

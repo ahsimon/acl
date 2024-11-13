@@ -4,6 +4,7 @@ package com.demo.lasvegas.annotator;
 import com.demo.lasvegas.annotator.spelresolver.SpelResolver;
 import com.netflix.concurrency.limits.Limiter;
 
+import com.netflix.concurrency.limits.limiter.SimpleLimiter;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -11,10 +12,14 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Optional;
 
 @Aspect
 @Component
@@ -46,36 +51,34 @@ public class VegasConcurrencyLimiterAspect {
 
         // Retrieve method details for logging
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
-        String methodName = method.getDeclaringClass().getName() + "#" + method.getName();
-        logger.info("Executing method: {}, class: {}", methodName, joinPoint.getTarget().getClass());
-
-        // Resolve backend using SpEL
         String backend = spelResolver.resolve(method, joinPoint.getArgs(), vegasConcurrencyLimiter.name());
 
 
         // Obtain the limiter for the resolved backend
-        Limiter<Void> limiter = concurrencyLimiterRegistry.getLimiter(backend);
-        logger.info("Limiter for backend '{}': {}", backend, limiter);
-
+        SimpleLimiter<Void> limiter = concurrencyLimiterRegistry.getLimiter(backend);
+        logger.info("limiter adaptative limit {}", limiter.getLimit());
         // Acquire a listener from the limiter
-        Limiter.Listener listener = limiter.acquire(null).orElse(null);
-
+        Optional<Limiter.Listener> listener = limiter.acquire(null);
         // Proceed with the method execution if listener is present
-        if (listener != null) {
+        if (listener.isPresent()) {
+
+            // Acquire a listener from the limiter
             try {
                 Object result = joinPoint.proceed();
-                listener.onSuccess();
+                listener.get().onSuccess();
                 return result;
             } catch (Throwable throwable) {
-                listener.onDropped();
+                listener.get().onDropped();
                 // Invoke fallback method in case of failure
                 return invokeFallback(joinPoint, vegasConcurrencyLimiter.fallbackMethod(), throwable);
             }
         }
-
-        // Proceed without a listener if not acquired
         return joinPoint.proceed();
     }
+
+
+
+
 
     private Object invokeFallback(ProceedingJoinPoint joinPoint, String fallbackMethodName, Throwable throwable) throws Throwable {
         // Check if the fallback method name is provided

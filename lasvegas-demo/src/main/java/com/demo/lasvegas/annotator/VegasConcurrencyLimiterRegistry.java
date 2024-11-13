@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentMap;
 @Configuration
 public class VegasConcurrencyLimiterRegistry {
     private static final Logger logger = LoggerFactory.getLogger(VegasConcurrencyLimiterRegistry.class);
-    protected final ConcurrentMap<String, Limiter<Void>> limiterMap = new ConcurrentHashMap<>();
+    protected final ConcurrentMap<String, SimpleLimiter<Void>> limiterMap = new ConcurrentHashMap<>();
     protected final VegasConcurrencyLimiterProperties properties;
 
     @Autowired
@@ -28,19 +28,19 @@ public class VegasConcurrencyLimiterRegistry {
         this.properties = properties;
     }
 
-    public Limiter<Void> getLimiter(String name) {
+    public SimpleLimiter<Void> getLimiter(String name) {
         // Attempt to retrieve the limiter from the map
         return limiterMap.computeIfAbsent(name, this::createDefaultLimiter);
     }
 
 
-    private Limiter<Void> createDefaultLimiter(String name) {
+    private SimpleLimiter<Void> createDefaultLimiter(String name) {
 
         // Retrieve properties configuration for the specified limiter name
         VegasConcurrencyConfig config = this.properties.createVegasConcurrencyConfig(name, this.properties.findVegasProperties(name));
-        logger.info("config {}", config);
 
-        AbstractLimit vegasLimit = VegasLimit.newBuilder()
+
+        VegasLimit vegasLimit = VegasLimit.newBuilder()
                     .initialLimit(config.getInitialLimit())
                     .maxConcurrency(config.getMaxConcurrency())
                     .build();

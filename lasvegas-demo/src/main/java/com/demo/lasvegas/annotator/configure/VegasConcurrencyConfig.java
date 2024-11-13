@@ -4,11 +4,33 @@ import java.io.Serializable;
 
 public class VegasConcurrencyConfig implements Serializable {
 
+
+
     private VegasConcurrencyConfig() {
     }
     private int initialLimit = 10;
     private int maxConcurrency = 1000;
     private double smoothing = 1.0;
+    private int alpha =3;
+    private int beta =6;
+
+
+    public int getBeta() {
+        return beta;
+    }
+
+    public void setBeta(int beta) {
+        this.beta = beta;
+    }
+
+    public int getAlpha() {
+        return alpha;
+    }
+
+    public void setAlpha(int alpha) {
+        this.alpha = alpha;
+    }
+
 
 
     public int getInitialLimit() {
@@ -48,6 +70,8 @@ public class VegasConcurrencyConfig implements Serializable {
         private int initialLimit = 10;
         private int maxConcurrency = 1000;
         private double smoothing = 1.0;
+        private int alpha = 3;
+        private int beta=6;
 
 
         public VegasConcurrencyConfig build() {
@@ -56,6 +80,8 @@ public class VegasConcurrencyConfig implements Serializable {
             config.initialLimit = initialLimit;
             config.smoothing = smoothing;
             config.maxConcurrency=maxConcurrency;
+            config.alpha = alpha;
+            config.beta =beta;
             return config;
         }
 
@@ -72,6 +98,8 @@ public class VegasConcurrencyConfig implements Serializable {
             this.initialLimit =baseConfig.getInitialLimit();
             this.maxConcurrency = baseConfig.getMaxConcurrency();
             this.smoothing = baseConfig.getSmoothing();
+            this.alpha = baseConfig.getAlpha();
+            this.beta = baseConfig.getBeta();
         }
 
         public Builder initialLimit(int initialLimit) {
@@ -95,8 +123,21 @@ public class VegasConcurrencyConfig implements Serializable {
             }
             return this;
         }
-    }
 
+        public Builder alpha(int alpha) {
+            if (alpha >= 0){
+                this.alpha = alpha;
+            }
+            return this;
+        }
+
+        public Builder beta(int beta) {
+            if (beta >= 0){
+                this.beta = beta;
+            }
+            return this;
+        }
+    }
 
     @Override
     public String toString() {
@@ -104,6 +145,8 @@ public class VegasConcurrencyConfig implements Serializable {
                 "initialLimit=" + initialLimit +
                 ", maxConcurrency=" + maxConcurrency +
                 ", smoothing=" + smoothing +
+                ", alpha=" + alpha +
+                ", beta=" + beta +
                 '}';
     }
 }

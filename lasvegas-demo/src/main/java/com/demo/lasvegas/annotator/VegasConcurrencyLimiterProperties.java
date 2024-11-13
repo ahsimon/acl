@@ -15,7 +15,7 @@ import static com.demo.lasvegas.annotator.configure.VegasConcurrencyConfig.custo
 import static com.demo.lasvegas.annotator.configure.VegasConcurrencyConfig.from;
 
 @Component
-@ConfigurationProperties(prefix = "concurrency.limits")
+@ConfigurationProperties(prefix = "concurrency.vegas")
 public class VegasConcurrencyLimiterProperties {
 
     private static final String DEFAULT = "default";
@@ -28,6 +28,8 @@ public class VegasConcurrencyLimiterProperties {
         private Integer maxConcurrency ;
         private Double smoothing ;
         private String baseConfig;
+        private Integer alpha;
+        private Integer beta;
 
 
         public Integer getInitialLimit() {
@@ -58,7 +60,21 @@ public class VegasConcurrencyLimiterProperties {
             this.baseConfig = baseConfig;
         }
 
+        public Integer getAlpha() {
+            return alpha;
+        }
 
+        public void setAlpha(Integer alpha) {
+            this.alpha = alpha;
+        }
+
+        public Integer getBeta() {
+            return beta;
+        }
+
+        public void setBeta(Integer beta) {
+            this.beta = beta;
+        }
 
         public String getBaseConfig() {
             return baseConfig;
@@ -154,6 +170,13 @@ public class VegasConcurrencyLimiterProperties {
                 builder.smoothing(properties.getSmoothing());
             }
 
+            if (properties.getAlpha() != null) {
+                builder.beta(properties.getAlpha());
+            }
+
+            if (properties.getBeta() != null) {
+                builder.beta(properties.getBeta());
+            }
 
         }
 
