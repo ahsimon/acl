@@ -8,7 +8,7 @@ import org.springframework.context.annotation.PropertySource;
 
 @ComponentScan(basePackages = "com.lasvegas.library")
 @Configuration
-@PropertySource(value = "classpath:vegas-application.yaml", factory = YamlPropertySourceFactory.class)
+@PropertySource(value = "classpath:application.yaml", factory = YamlPropertySourceFactory.class)
 */
 public class VegasConcurrencyLimiterConfig {
  }

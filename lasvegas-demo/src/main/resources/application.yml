@@ -1,11 +1,4 @@
-concurrency.vegas:
-  configs:
-    default:
-      initialLimit: 3
-      alpha: 6
-      beta: 9
-      smoothing: 1.0
-      maxConcurrency: 100
+
 server:
   port:  6060
 
