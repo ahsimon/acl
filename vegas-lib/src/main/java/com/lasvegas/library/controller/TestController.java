@@ -1,18 +1,15 @@
-package com.demo.lasvegas.controller;
+package com.lasvegas.library.controller;
 
 import com.lasvegas.library.annotation.VegasConcurrencyLimiter;
+
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 @RestController
-public class AnnotatedConcurrencyLimiterController {
-    private static final Logger logger = LoggerFactory.getLogger(AnnotatedConcurrencyLimiterController.class);
-
+public class TestController {
 
     @GetMapping("/test")
     @VegasConcurrencyLimiter(name = "default", fallbackMethod = "fallbackResponse")

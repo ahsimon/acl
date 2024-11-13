@@ -9,3 +9,7 @@ concurrency.vegas:
 server:
   port:  6060
 
+logging:
+  level:
+    root: info
+    com.lasvegas.library: info

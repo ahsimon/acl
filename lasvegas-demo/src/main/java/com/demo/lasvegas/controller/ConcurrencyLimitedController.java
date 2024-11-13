@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
 @RestController
 public class ConcurrencyLimitedController {
 
-    private final Limiter<Void> limiter; 
+   /* private final Limiter<Void> limiter;
     AbstractLimit vegasLimit ; 
 
     public ConcurrencyLimitedController() {
@@ -50,5 +50,5 @@ public class ConcurrencyLimitedController {
                                                .body("Too many requests, try again later"));
             }
         });
-    }
+    }*/
 }
