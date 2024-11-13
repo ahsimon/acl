@@ -1,9 +1,12 @@
 package com.lasvegas.library.annotation;
 import com.lasvegas.library.annotation.configure.VegasConcurrencyConfig;
+import com.lasvegas.library.configuration.YamlPropertySourceFactory;
 import com.lasvegas.library.exception.ConfigurationNotFoundException;
 import com.lasvegas.library.utils.ConfigUtils;
 import io.micrometer.common.util.StringUtils;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -12,6 +15,7 @@ import java.util.Map;
 import static com.lasvegas.library.annotation.configure.VegasConcurrencyConfig.custom;
 import static com.lasvegas.library.annotation.configure.VegasConcurrencyConfig.from;
 @Component
+@PropertySource(value = "classpath:vegas-application.yaml", factory = YamlPropertySourceFactory.class)
 @ConfigurationProperties(prefix = "concurrency.vegas")
 public class VegasConcurrencyLimiterProperties {
 

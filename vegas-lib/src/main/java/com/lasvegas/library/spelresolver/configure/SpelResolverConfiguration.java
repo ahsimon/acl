@@ -1,6 +1,8 @@
-package com.lasvegas.library.spelresolver;
+package com.lasvegas.library.spelresolver.configure;
 
 
+import com.lasvegas.library.spelresolver.DefaultSpelResolver;
+import com.lasvegas.library.spelresolver.SpelResolver;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -14,7 +14,8 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 
 
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 
@@ -27,6 +28,7 @@ import java.util.Optional;
 @Aspect
 @Component
 public class VegasConcurrencyLimiterAspect {
+    private static final Logger logger = LoggerFactory.getLogger(VegasConcurrencyLimiterAspect.class);
 
     private final SpelResolver spelResolver;
     private final VegasConcurrencyLimiterRegistry concurrencyLimiterRegistry;
@@ -59,7 +61,7 @@ public class VegasConcurrencyLimiterAspect {
 
         // Obtain the limiter for the resolved backend
         SimpleLimiter<Void> limiter = concurrencyLimiterRegistry.getLimiter(backend);
-        System.out.println("limiter adaptative limit: "+ limiter.getLimit());
+        logger.info("Vegas adaptative limiter: current limit:{} ", limiter.getLimit());
         // Acquire a listener from the limiter
         Optional<Limiter.Listener> listener = limiter.acquire(null);
         // Proceed with the method execution if listener is present
