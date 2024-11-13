@@ -97,4 +97,13 @@ public class VegasConcurrencyConfig implements Serializable {
         }
     }
 
+
+    @Override
+    public String toString() {
+        return "VegasConcurrencyConfig{" +
+                "initialLimit=" + initialLimit +
+                ", maxConcurrency=" + maxConcurrency +
+                ", smoothing=" + smoothing +
+                '}';
+    }
 }
