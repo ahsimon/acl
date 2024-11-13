@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import static com.demo.lasvegas.annotator.configure.VegasConcurrencyConfig.custom;
 import static com.demo.lasvegas.annotator.configure.VegasConcurrencyConfig.from;

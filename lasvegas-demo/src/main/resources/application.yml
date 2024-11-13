@@ -2,6 +2,7 @@ concurrency.limits:
   configs:
     default:
       initialLimit: 2
+      maxConcurrency: 10
 server:
   port:  6060
 

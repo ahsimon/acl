@@ -38,10 +38,7 @@ public class VegasConcurrencyLimiterRegistry {
 
         // Retrieve properties configuration for the specified limiter name
         VegasConcurrencyConfig config = this.properties.createVegasConcurrencyConfig(name, this.properties.findVegasProperties(name));
-        // If properties are present, update the Vegas limit with the provided configurations
-        if (logger.isDebugEnabled()){
-            logger.debug("config {}", config);
-        }
+        logger.info("config {}", config);
 
         AbstractLimit vegasLimit = VegasLimit.newBuilder()
                     .initialLimit(config.getInitialLimit())
