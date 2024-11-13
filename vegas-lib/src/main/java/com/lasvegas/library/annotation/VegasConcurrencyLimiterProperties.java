@@ -15,7 +15,6 @@ import java.util.Map;
 import static com.lasvegas.library.annotation.configure.VegasConcurrencyConfig.custom;
 import static com.lasvegas.library.annotation.configure.VegasConcurrencyConfig.from;
 @Component
-@PropertySource(value = "classpath:vegas-application.yaml", factory = YamlPropertySourceFactory.class)
 @ConfigurationProperties(prefix = "concurrency.vegas")
 public class VegasConcurrencyLimiterProperties {
 
