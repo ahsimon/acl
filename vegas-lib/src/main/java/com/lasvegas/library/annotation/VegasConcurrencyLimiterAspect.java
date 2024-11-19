@@ -18,6 +18,7 @@ import org.aspectj.lang.annotation.Aspect;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.stereotype.Component;
 
 
@@ -85,7 +86,7 @@ public class VegasConcurrencyLimiterAspect {
                 return invokeFallback(joinPoint, method, vegasConcurrencyLimiter.fallbackMethod(), throwable);
             }
         }
-        return joinPoint.proceed();
+        return invokeFallback(joinPoint, method, vegasConcurrencyLimiter.fallbackMethod(), new RuntimeException("Vegas fallback not found"));
     }
 
 
