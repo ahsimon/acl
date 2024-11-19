@@ -70,8 +70,10 @@ public class VegasConcurrencyLimiterAspect {
         // Obtain the limiter for the resolved backend
         SimpleLimiter<Void> limiter = concurrencyLimiterRegistry.getLimiter(backend);
         logger.info("Vegas adaptative limiter: current limit:{} ", limiter.getLimit());
+
         // Acquire a listener from the limiter
         Optional<Limiter.Listener> listener = limiter.acquire(null);
+        logger.info("listener is present :{} ", listener.isPresent());
         // Proceed with the method execution if listener is present
         if (listener.isPresent()) {
 
