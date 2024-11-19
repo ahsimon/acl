@@ -31,6 +31,8 @@ public class VegasFallbackExecutor {
                 logger.warn("No fallback method match found", ex);
             }
         }
+
+        logger.warn(" fallbackMethod  found:{}", fallbackMethod);
         // not fallback declared throws original exception
         if(fallbackMethod == null){
               throw throwable;

@@ -250,4 +250,15 @@ public class VegasFallbackMethod {
             return targetClass.getName().hashCode() ^ fallbackMethodName.hashCode();
         }
     }
+
+    @Override
+    public String toString() {
+        return "VegasFallbackMethod{" +
+                "fallbackMethods=" + fallbackMethods +
+                ", args=" + Arrays.toString(args) +
+                ", original=" + original +
+                ", proxy=" + proxy +
+                ", returnType=" + returnType +
+                '}';
+    }
 }
