@@ -86,7 +86,7 @@ public class VegasConcurrencyLimiterAspect {
                 return invokeFallback(joinPoint, method, vegasConcurrencyLimiter.fallbackMethod(), throwable);
             }
         }
-        return invokeFallback(joinPoint, method, vegasConcurrencyLimiter.fallbackMethod(), new RuntimeException("Vegas fallback not found"));
+        return joinPoint.proceed();
     }
 
 
