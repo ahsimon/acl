@@ -6,3 +6,12 @@ logging:
   level:
     root: info
     com.lasvegas.library: info
+
+concurrency.vegas:
+  configs:
+    default:
+      initialLimit: 2
+      alpha: 1
+      beta: 2
+      smoothing: 1.0
+      maxConcurrency: 4
