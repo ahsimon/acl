@@ -13,10 +13,11 @@ public class VegasFallbackExecutor {
     private static final Logger logger = LoggerFactory.getLogger(VegasFallbackExecutor.class);
 
     private final SpelResolver spelResolver;
+    private final VegasFallbackDecorators fallbackDecorators;
 
-
-    public VegasFallbackExecutor(SpelResolver spelResolver) {
+    public VegasFallbackExecutor(SpelResolver spelResolver, VegasFallbackDecorators fallbackDecorators) {
         this.spelResolver = spelResolver;
+        this.fallbackDecorators = fallbackDecorators;
     }
 
     public Object execute(ProceedingJoinPoint proceedingJoinPoint, Method method, String fallbackMethodValue, Throwable throwable) throws Throwable {
@@ -31,12 +32,12 @@ public class VegasFallbackExecutor {
                 logger.warn("No fallback method match found", ex);
             }
         }
-
-        logger.warn(" fallbackMethod  found:{}", fallbackMethod);
-        // not fallback declared throws original exception
-        if(fallbackMethod == null){
-              throw throwable;
+        if (fallbackMethod == null) {
+            return throwable;
+        } else {
+            return fallbackDecorators.decorate(fallbackMethod,throwable).get();
         }
-      return fallbackMethod.fallback(throwable);
     }
+
+
 }

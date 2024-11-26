@@ -2,6 +2,7 @@ package com.lasvegas.library.annotation;
 
 
 
+import com.lasvegas.library.exception.VegasConcurrentFullException;
 import com.lasvegas.library.fallback.VegasFallbackExecutor;
 import com.lasvegas.library.spelresolver.SpelResolver;
 import com.lasvegas.library.utils.AnnotationExtractor;
@@ -20,6 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 
 import java.lang.reflect.InvocationTargetException;
@@ -85,10 +88,11 @@ public class VegasConcurrencyLimiterAspect {
             } catch (Throwable throwable) {
                 listener.get().onDropped();
                 // Invoke fallback method in case of failure
-                return invokeFallback(joinPoint, method, vegasConcurrencyLimiter.fallbackMethod(), throwable);
+               return  invokeFallback(joinPoint, method, vegasConcurrencyLimiter.fallbackMethod(), throwable);
+
             }
         }
-        return joinPoint.proceed();
+        return    invokeFallback(joinPoint, method, vegasConcurrencyLimiter.fallbackMethod(), new VegasConcurrentFullException(backend));
     }
 
 
@@ -111,17 +115,18 @@ public class VegasConcurrencyLimiterAspect {
 
     private Object invokeFallback(ProceedingJoinPoint joinPoint,  Method method , String fallbackMethodValue, Throwable throwable) throws Throwable {
         // Check if the fallback method name is provided
+
+        logger.info("fallbackMethodValue :{} ",fallbackMethodValue);
         if (fallbackMethodValue == null || fallbackMethodValue.isEmpty()) {
            // logger.warn("No fallback method provided. Throwing original exception.");
             throw throwable;
         }
 
-
         try {
 
             // Invoke the fallback method and return the result
             //return fallbackMethod.invoke(target);
-            return vegasFallbackExecutor.execute(joinPoint,method, fallbackMethodValue,throwable);
+            return vegasFallbackExecutor.execute(joinPoint,method, fallbackMethodValue, throwable);
         } catch (NoSuchMethodException e) {
             // Log specific error for method not found
             //logger.error("Fallback method not found: {} on target: {}", fallbackMethodName, joinPoint.getTarget().getClass().getName(), e);

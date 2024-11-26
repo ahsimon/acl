@@ -1,6 +1,6 @@
 package com.lasvegas.library.fallback;
 
-import com.lasvegas.library.exception.IllegalReturnTypeException;
+
 import com.lasvegas.library.functions.CheckedSupplier;
 
 public class VegasDefaultFallbackDecorator implements VegasFallbackDecorator {
@@ -12,16 +12,9 @@ public class VegasDefaultFallbackDecorator implements VegasFallbackDecorator {
     }
 
     @Override
-    public CheckedSupplier<Object> decorate(VegasFallbackMethod fallbackMethod,
-                                            CheckedSupplier<Object> supplier) {
+    public CheckedSupplier<Object> decorate(VegasFallbackMethod fallbackMethod, Throwable throwable) {
         return () -> {
-            try {
-                return supplier.get();
-            } catch (IllegalReturnTypeException e) {
-                throw e;
-            } catch (Throwable throwable) {
                 return fallbackMethod.fallback(throwable);
-            }
         };
     }
 }
