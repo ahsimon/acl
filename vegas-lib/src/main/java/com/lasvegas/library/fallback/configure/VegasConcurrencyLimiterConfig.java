@@ -16,12 +16,12 @@ public class VegasConcurrencyLimiterConfig {
 
 
     @Bean
-    public VegasFallbackDecorators fallbackDecorators(@Autowired List<VegasFallbackDecorator> fallbackDecorators) {
+    public VegasFallbackDecorators vegasFallbackDecorators(@Autowired List<VegasFallbackDecorator> fallbackDecorators) {
         return new VegasFallbackDecorators(fallbackDecorators);
     }
   @Bean
 
-  public VegasFallbackExecutor fallbackExecutor(SpelResolver spelResolver, VegasFallbackDecorators fallbackDecorators) {
+  public VegasFallbackExecutor vegasFallbackExecutor(SpelResolver spelResolver, VegasFallbackDecorators fallbackDecorators) {
    return new VegasFallbackExecutor(spelResolver, fallbackDecorators);
   }
 
