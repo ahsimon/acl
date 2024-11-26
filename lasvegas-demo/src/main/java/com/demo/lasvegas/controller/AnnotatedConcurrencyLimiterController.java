@@ -30,8 +30,8 @@ public class AnnotatedConcurrencyLimiterController {
 
 
     public Mono<ResponseEntity<String>> fallbackResponse(Exception e) {
-        Mono<ResponseEntity<String>> just = Mono.just(ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+      return Mono.just(ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
                 .body("Fallback: Service is overloaded. Please try again later. Cause "+e.getMessage() ));
-        return just;
+
     }
 }

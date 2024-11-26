@@ -1,4 +1,7 @@
 package com.lasvegas.library.fallback;
+import com.lasvegas.library.annotation.VegasConcurrencyLimiterAspect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.ConcurrentReferenceHashMap;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
@@ -12,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class VegasFallbackMethod {
-
+    private static final Logger logger = LoggerFactory.getLogger(VegasFallbackMethod.class);
     private static final Map<MethodMeta, Map<Class<?>, Method>> FALLBACK_METHODS_CACHE = new ConcurrentReferenceHashMap<>();
     private final Map<Class<?>, Method> fallbackMethods;
     private final Object[] args;
@@ -31,7 +34,7 @@ public class VegasFallbackMethod {
      * @param proxy                    proxy object the fallbackMethod method will be invoked
      */
     private VegasFallbackMethod(Map<Class<?>, Method> fallbackMethods, Class<?> originalMethodReturnType,
-                                Object[] args, Object original, Object proxy) {
+                           Object[] args, Object original, Object proxy) {
 
         this.fallbackMethods = fallbackMethods;
         this.args = args;
@@ -49,7 +52,7 @@ public class VegasFallbackMethod {
      * @return FallbackMethod instance
      */
     public static VegasFallbackMethod create(String fallbackMethodName, Method originalMethod,
-                                             Object[] args, Object original, Object proxy) throws NoSuchMethodException {
+                                        Object[] args, Object original, Object proxy) throws NoSuchMethodException {
         MethodMeta methodMeta = new MethodMeta(
                 fallbackMethodName,
                 originalMethod.getParameterTypes(),
@@ -125,10 +128,21 @@ public class VegasFallbackMethod {
      * @return fallback value
      * @throws Throwable if throwable is unrecoverable, throwable will be thrown
      */
+
     public Object fallback(Throwable thrown) throws Throwable {
+        logger.warn("fallbackMethods.size() {}", fallbackMethods.size());
+
+        logger.warn("thrown {}", thrown.getClass());
+
+
         if (fallbackMethods.size() == 1) {
             Map.Entry<Class<?>, Method> entry = fallbackMethods.entrySet().iterator().next();
+            logger.warn("entry.getKey() = {}", entry.getKey());
+            logger.warn("entry.getKey().isAssignableFrom(thrown.getClass()) {}", entry.getKey().isAssignableFrom(thrown.getClass()));
             if (entry.getKey().isAssignableFrom(thrown.getClass())) {
+
+
+                logger.warn("invoking -> entry.getValue()= {}", entry.getValue());
                 return invoke(entry.getValue(), thrown);
             } else {
                 throw thrown;
@@ -141,6 +155,7 @@ public class VegasFallbackMethod {
             fallback = fallbackMethods.get(thrownClass);
             thrownClass = thrownClass.getSuperclass();
         }
+        logger.warn("Method fallback {}", fallback);
 
         if (fallback != null) {
             return invoke(fallback, thrown);
@@ -169,11 +184,18 @@ public class VegasFallbackMethod {
      */
     private Object invoke(Method fallback, Throwable throwable) throws Throwable {
         boolean accessible = fallback.isAccessible();
+
+
+        logger.warn("accessible: {}", accessible);
+        logger.warn("args.length : {}", args.length );
+
         try {
             if (!accessible) {
                 ReflectionUtils.makeAccessible(fallback);
             }
             Object target = getTarget(fallback);
+            logger.warn("target: {}", target);
+
             if (args.length != 0) {
                 if (fallback.getParameterTypes().length == 1 && Throwable.class
                         .isAssignableFrom(fallback.getParameterTypes()[0])) {
@@ -182,6 +204,7 @@ public class VegasFallbackMethod {
                 Object[] newArgs = Arrays.copyOf(args, args.length + 1);
                 newArgs[args.length] = throwable;
 
+                logger.warn("we need to see this message fallback.invoke(target, newArgs): {},{}", target,newArgs);
                 return fallback.invoke(target, newArgs);
 
             } else {

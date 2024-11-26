@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.lasvegas.library</groupId>
 	<artifactId>vegas-lib</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.5-SNAPSHOT</version>
 	<name>vegas-lib</name>
 	<packaging>jar</packaging>
 	<properties>
