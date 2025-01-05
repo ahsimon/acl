@@ -1,0 +1,18 @@
+https://dev.to/manojshr/spring-actuators-custom-endpoint-3c9n
+
+create a custom actuator endpoint with las vegas rate limiter info
+
+1. 
+https://nikhilsomansahu.medium.com/how-to-create-custom-endpoints-in-spring-boot-actuators-6c737f7267af
+
+2.
+https://dev.to/manojshr/spring-actuators-custom-endpoint-3c9n
+
+3. 
+
+https://github.com/resilience4j/resilience4j/blob/67c3c2d4e34e38b3456f0c73b121c8aabbbd2cfa/resilience4j-spring-boot3/src/main/java/io/github/resilience4j/springboot3/circuitbreaker/monitoring/endpoint/CircuitBreakerEventsEndpoint.java#L21
+
+
+4. Fix las vegas limiter info
+
+https://reliablesystems.io/handling-overload-with-concurrency-control-and-load-shedding-part-1-1a7f76d2a1dd	

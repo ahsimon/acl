@@ -1,0 +1,303 @@
+Key Features of BlockingAdaptiveExecutor:
+Dynamic Thread Pool Size:
+The BlockingAdaptiveExecutor uses a Limiter to determine the size of the thread pool. This allows the executor to adapt its concurrency level based on the system's current state and load.
+
+Blocking Behavior:
+If the limit has been reached, any Runnable executed will block the calling thread until the limit is released. This helps to control the load and prevent overloading the system.
+
+Homogeneous Operations:
+Operations submitted to this executor should have similar long-term latency characteristics. This ensures that the RTT samples taken from successful operations are representative.
+
+Exception Handling:
+
+UncheckedTimeoutException: If a request times out or an external limit is reached, the Runnable should throw this exception.
+Other Exceptions: These are ignored to avoid any unintended side effects on the limiter logic.
+
+The BlockingAdaptiveExecutor class provides a builder pattern for creating instances with customized configurations.
+
+
+# Annotation
+
+1. Configure BlockingAdaptiveExecutor annotation:
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface AdaptiveExecution {
+}
+
+
+
+2. Configure BlockingAdaptiveExecutor Bean:
+Create a Spring configuration class to define the BlockingAdaptiveExecutor bean.
+
+import com.netflix.concurrency.limits.Limiter;
+import com.netflix.concurrency.limits.executors.BlockingAdaptiveExecutor;
+import com.netflix.concurrency.limits.limiter.SimpleLimiter;
+import com.netflix.concurrency.limits.limit.AIMDLimit;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class ExecutorConfig {
+
+    @Bean
+    public BlockingAdaptiveExecutor blockingAdaptiveExecutor() {
+        Limiter<Void> limiter = SimpleLimiter.newBuilder()
+                .limit(AIMDLimit.newBuilder().initialLimit(10).build())
+                .build();
+
+        return BlockingAdaptiveExecutor.newBuilder()
+                .limiter(limiter)
+                .build();
+    }
+}
+
+3. Create an aspect
+
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import com.netflix.concurrency.limits.executors.BlockingAdaptiveExecutor;
+
+@Aspect
+@Component
+public class AdaptiveExecutionAspect {
+
+    private final BlockingAdaptiveExecutor executor;
+
+    @Autowired
+    public AdaptiveExecutionAspect(BlockingAdaptiveExecutor executor) {
+        this.executor = executor;
+    }
+
+    @Around("@annotation(AdaptiveExecution)")
+    public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
+        final Object[] result = new Object[1];
+        executor.execute(() -> {
+            try {
+                result[0] = joinPoint.proceed();
+            } catch (Throwable throwable) {
+                throw new RuntimeException(throwable);
+            }
+        });
+        return result[0];
+    }
+}
+
+4. Now you can use the @AdaptiveExecution annotation on any method you want to be executed using the BlockingAdaptiveExecutor.
+
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class TaskService {
+
+    @AdaptiveExecution
+    public void executeTask() {
+        // Your task logic here
+        System.out.println("Task executed");
+    }
+}
+
+
+------
+
+
+
+
+----- single example---
+public final class BlockingAdaptiveExecutor implements Executor {
+    public static class Builder {
+        private static AtomicInteger idCounter = new AtomicInteger();
+        private MetricRegistry metricRegistry = EmptyMetricRegistry.INSTANCE;
+        private Executor executor;
+        private Limiter<Void> limiter;
+        private String name;
+
+        public Builder metricRegistry(MetricRegistry metricRegistry) {
+            this.metricRegistry = metricRegistry;
+            return this;
+        }
+
+        public Builder executor(Executor executor) {
+            this.executor = executor;
+            return this;
+        }
+
+        public Builder limiter(Limiter<Void> limiter) {
+            this.limiter = limiter;
+            return this;
+        }
+
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public BlockingAdaptiveExecutor build() {
+            if (name == null) {
+                name = "unnamed-" + idCounter.incrementAndGet();
+            }
+
+            if (executor == null) {
+                executor = Executors.newCachedThreadPool(new ThreadFactory() {
+                    @Override
+                    public Thread newThread(Runnable r) {
+                        Thread thread = new Thread(r);
+                        thread.setDaemon(true);
+                        return thread;
+                    }
+                });
+            }
+
+            if (limiter == null) {
+                limiter = SimpleLimiter.newBuilder()
+                        .metricRegistry(metricRegistry)
+                        .limit(AIMDLimit.newBuilder().build())
+                        .build();
+            }
+
+            return new BlockingAdaptiveExecutor(this);
+        }
+    }
+
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
+    private final Limiter<Void> limiter;
+    private final Executor executor;
+
+    private BlockingAdaptiveExecutor(Builder builder) {
+        this.limiter = builder.limiter;
+        this.executor = builder.executor;
+    }
+
+    @Override
+    public void execute(Runnable command) {
+        Listener listener = limiter.acquire(null).orElseThrow(() -> new RejectedExecutionException());
+        try {
+            executor.execute(() -> {
+                try {
+                    command.run();
+                    listener.onSuccess();
+                } catch (UncheckedTimeoutException e) {
+                    listener.onDropped();
+                } catch (RejectedExecutionException e) {
+                    listener.onDropped();
+                } catch (Exception e) {
+                    listener.onIgnore();
+                }
+            });
+        } catch (RejectedExecutionException e) {
+            listener.onDropped();
+            throw e;
+        }
+    }
+}
+
+
+import com.netflix.concurrency.limits.Limiter;
+import com.netflix.concurrency.limits.executors.BlockingAdaptiveExecutor;
+import com.netflix.concurrency.limits.limiter.SimpleLimiter;
+
+public class Example {
+    public static void main(String[] args) {
+        Limiter<Void> limiter = SimpleLimiter.newBuilder()
+                .limit(AIMDLimit.newBuilder().initialLimit(10).build())
+                .build();
+        
+        BlockingAdaptiveExecutor executor = BlockingAdaptiveExecutor.newBuilder()
+                .limiter(limiter)
+                .build();
+        
+        executor.execute(() -> {
+            // Your task logic here
+            System.out.println("Task executed");
+        });
+    }
+}
+
+
+------
+
+Create a configuration class to define the BlockingAdaptiveExecutor bean.
+
+import com.netflix.concurrency.limits.Limiter;
+import com.netflix.concurrency.limits.executors.BlockingAdaptiveExecutor;
+import com.netflix.concurrency.limits.limiter.SimpleLimiter;
+import com.netflix.concurrency.limits.limit.AIMDLimit;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class ExecutorConfig {
+
+    @Bean
+    public BlockingAdaptiveExecutor blockingAdaptiveExecutor() {
+        Limiter<Void> limiter = SimpleLimiter.newBuilder()
+                .limit(AIMDLimit.newBuilder().initialLimit(10).build())
+                .build();
+
+        return BlockingAdaptiveExecutor.newBuilder()
+                .limiter(limiter)
+                .build();
+    }
+}
+
+
+Use BlockingAdaptiveExecutor in Your Service:
+Inject the BlockingAdaptiveExecutor bean into your service and use it to execute tasks.
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.netflix.concurrency.limits.executors.BlockingAdaptiveExecutor;
+
+@Service
+public class TaskService {
+
+    private final BlockingAdaptiveExecutor executor;
+
+    @Autowired
+    public TaskService(BlockingAdaptiveExecutor executor) {
+        this.executor = executor;
+    }
+
+    public void executeTask() {
+        executor.execute(() -> {
+            // Your task logic here
+            System.out.println("Task executed");
+        });
+    }
+}
+
+
+Invoke the Service Method:
+You can now invoke the executeTask method from a controller or any other component in your Spring Boot application.
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class TaskController {
+
+    private final TaskService taskService;
+
+    @Autowired
+    public TaskController(TaskService taskService) {
+        this.taskService = taskService;
+    }
+
+    @GetMapping("/execute")
+    public String executeTask() {
+        taskService.executeTask();
+        return "Task executed";
+    }
+}

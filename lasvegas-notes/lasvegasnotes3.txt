@@ -1,0 +1,28 @@
+lasvegasnotes3.txt
+VegasLimit
+Algorithm:
+
+VegasLimit is based on the Vegas congestion control algorithm.
+It uses the difference between the expected and actual Round Trip Time (RTT) to adjust the concurrency limit.
+Behavior:
+
+RTT-based Adjustment: The limit is adjusted based on the observed RTT. If the actual RTT is close to the expected RTT, the limit is increased. If the actual RTT is significantly higher, the limit is decreased.
+This approach aims to maintain a balance between throughput and latency by keeping the system operating near its optimal point.
+Use Cases:
+
+Suitable for high-throughput, low-latency environments where maintaining optimal performance is crucial.
+Useful in scenarios where RTT is a good indicator of system performance and load.Adjustment Mechanism:
+
+AIMDLimit: Adjusts the limit based on fixed increments and multiplicative decreases, similar to TCP congestion control.
+VegasLimit: Adjusts the limit based on the difference between expected and actual RTT, aiming to keep the system near its optimal operating point.
+Suitability:
+
+AIMDLimit: Better suited for environments with gradual load changes and where a conservative approach to increasing concurrency is preferred.
+VegasLimit: Better suited for high-throughput, low-latency environments where RTT is a good indicator of system performance.
+Behavior under Load:
+
+AIMDLimit: Gradually increases concurrency under low load and rapidly decreases it under high load.
+VegasLimit: Adjusts concurrency based on RTT measurements, aiming to maintain optimal performance.
+Summary
+AIMDLimit: Uses a simple additive increase and multiplicative decrease approach, suitable for conservative concurrency adjustments.
+VegasLimit: Uses RTT-based adjustments to maintain optimal performance, suitable for high-throughput, low-latency environments.
