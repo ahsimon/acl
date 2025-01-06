@@ -78,7 +78,7 @@ public class VegasConcurrencyLimiterAspect {
         SimpleLimiter<Void> limiter = vegasConcurrency.getLimiter();
                 // Acquire a listener from the limiter
         Optional<Limiter.Listener> listener = limiter.acquire(null);
-        logger.info("listener is present :{} ", listener.isPresent());
+       // logger.info("listener is present :{} ", listener.isPresent());
         // Proceed with the method execution if listener is present
         if (listener.isPresent()) {
 

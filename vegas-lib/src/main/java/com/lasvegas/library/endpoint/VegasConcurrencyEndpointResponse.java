@@ -8,22 +8,22 @@ public class VegasConcurrencyEndpointResponse {
 
 
        @Nullable
-        private Map<String, VegasConcurrencyDetails> vegasConcurrencyDetails;
+        private Map<String, VegasConcurrencyDetails> vegasConcurrencyLimiters;
 
         public VegasConcurrencyEndpointResponse() {
         }
 
-        public VegasConcurrencyEndpointResponse(Map<String, VegasConcurrencyDetails> vegasConcurrencyDetails) {
-            this.vegasConcurrencyDetails = vegasConcurrencyDetails;
+        public VegasConcurrencyEndpointResponse(Map<String, VegasConcurrencyDetails> vegasConcurrencyLimiters) {
+            this.vegasConcurrencyLimiters = vegasConcurrencyLimiters;
         }
 
         @Nullable
-        public Map<String, VegasConcurrencyDetails> getVegasConcurrencyDetails() {
-            return vegasConcurrencyDetails;
+        public Map<String, VegasConcurrencyDetails> getVegasConcurrencyLimiters() {
+            return vegasConcurrencyLimiters;
         }
 
         public void VegasConcurrencyDetails(@Nullable Map<String, VegasConcurrencyDetails> vegasConcurrencyDetails) {
-            this.vegasConcurrencyDetails = vegasConcurrencyDetails;
+            this.vegasConcurrencyLimiters = vegasConcurrencyDetails;
         }
 
 }
