@@ -15,3 +15,9 @@ concurrency.vegas:
       beta: 2
       smoothing: 1.0
       maxConcurrency: 4
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
