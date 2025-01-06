@@ -6,6 +6,8 @@ import com.netflix.concurrency.limits.limit.VegasLimit;
 
 import com.netflix.concurrency.limits.limiter.SimpleLimiter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +18,7 @@ import java.util.concurrent.ConcurrentMap;
 
 @Configuration
 public class VegasConcurrencyLimiterRegistry {
-
+    private static final Logger logger = LoggerFactory.getLogger(VegasConcurrencyLimiterRegistry.class);
     protected final ConcurrentMap<String, SimpleLimiter<Void>> limiterMap = new ConcurrentHashMap<>();
     protected final VegasConcurrencyLimiterProperties properties;
 
@@ -35,12 +37,7 @@ public class VegasConcurrencyLimiterRegistry {
 
         // Retrieve properties configuration for the specified limiter name
         VegasConcurrencyConfig config = this.properties.createVegasConcurrencyConfig(name, this.properties.findVegasProperties(name));
-
-
-        VegasLimit vegasLimit = VegasLimit.newBuilder()
-                .initialLimit(config.getInitialLimit())
-                .maxConcurrency(config.getMaxConcurrency())
-                .build();
+        VegasLimit vegasLimit =  this.properties.createVegasConcurrencyBuilder(VegasLimit.newBuilder(), config, this.properties.findVegasProperties(name) );
 
         // Build and return the SimpleLimiter with the configured Vegas limit
         return SimpleLimiter.newBuilder()
