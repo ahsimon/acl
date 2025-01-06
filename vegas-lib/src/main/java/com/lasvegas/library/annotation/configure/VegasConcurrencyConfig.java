@@ -24,16 +24,16 @@ public class VegasConcurrencyConfig implements Serializable {
      int initialLimit = 20;
      int maxConcurrency = 1000;
      double smoothing = 1.0;
-     int alpha =3;
-     int beta =6;
-
+    int probeMultiplier = 30;
+    int alpha =3;
+    int beta =6;
 
      IntUnaryOperator alphaFunc = (limit) -> 3 * LOG10.applyAsInt(limit);
      IntUnaryOperator betaFunc = (limit) -> 6 * LOG10.applyAsInt(limit);
      IntUnaryOperator thresholdFunc = LOG10;
      DoubleUnaryOperator increaseFunc = (limit) -> limit + LOG10.applyAsInt((int) limit);
      DoubleUnaryOperator decreaseFunc = (limit) -> limit - LOG10.applyAsInt((int) limit);
-     int probeMultiplier = 30;
+
 
      MetricRegistry registry = EmptyMetricRegistry.INSTANCE;
 

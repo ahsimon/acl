@@ -2,7 +2,6 @@ concurrency.vegas:
   configs:
     default:
       initialLimit: 2
-      alpha: 3
-      beta: 6
       smoothing: 1.0
-      maxConcurrency: 10
+      maxConcurrency: 100
+

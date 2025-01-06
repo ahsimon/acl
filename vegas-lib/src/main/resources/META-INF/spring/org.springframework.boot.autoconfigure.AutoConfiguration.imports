@@ -2,6 +2,6 @@ com.lasvegas.library.annotation.VegasConcurrencyLimiterProperties
 com.lasvegas.library.annotation.VegasConcurrencyLimiterRegistry
 com.lasvegas.library.annotation.VegasConcurrencyLimiterAspect
 com.lasvegas.library.fallback.configure.VegasConcurrencyLimiterConfig
-
+com.lasvegas.library.endpoint.configure.VegasConcurrencyEndpointConfig
 
 com.lasvegas.library.spelresolver.configure.SpelResolverConfiguration

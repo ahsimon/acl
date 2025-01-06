@@ -152,7 +152,7 @@ public class VegasConcurrencyLimiterProperties {
     }
 
 
-    public VegasLimit createVegasConcurrencyBuilder(VegasLimit.Builder builder, VegasConcurrencyConfig config, InstanceProperties vegasProperties) {
+    public VegasLimit createVegasConcurrencyLimit(VegasLimit.Builder builder, VegasConcurrencyConfig config, InstanceProperties vegasProperties) {
 
         if(config != null){
             // add  builder basic configs

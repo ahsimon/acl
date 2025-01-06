@@ -2,12 +2,14 @@ package com.lasvegas.library.annotation;
 
 
 
+import com.lasvegas.library.core.VegasConcurrency;
 import com.lasvegas.library.exception.VegasConcurrentFullException;
 import com.lasvegas.library.fallback.VegasFallbackExecutor;
 
 import com.lasvegas.library.spelresolver.SpelResolver;
 import com.lasvegas.library.utils.AnnotationExtractor;
 import com.netflix.concurrency.limits.Limiter;
+import com.netflix.concurrency.limits.executors.UncheckedTimeoutException;
 import com.netflix.concurrency.limits.limiter.SimpleLimiter;
 import org.aspectj.lang.annotation.Around;
 
@@ -29,6 +31,7 @@ import java.lang.reflect.Method;
 
 import java.lang.reflect.Proxy;
 import java.util.Optional;
+import java.util.concurrent.RejectedExecutionException;
 
 
 @Aspect
@@ -70,10 +73,10 @@ public class VegasConcurrencyLimiterAspect {
         String backend = spelResolver.resolve(method, joinPoint.getArgs(), vegasConcurrencyLimiter.name());
 
         // Obtain the limiter for the resolved backend
-        SimpleLimiter<Void> limiter = concurrencyLimiterRegistry.getLimiter(backend);
-        logger.info("Vegas adaptative limiter: current limit:{} ", limiter.getLimit());
+      VegasConcurrency vegasConcurrency =  concurrencyLimiterRegistry.getVegasConcurrency(backend);
 
-        // Acquire a listener from the limiter
+        SimpleLimiter<Void> limiter = vegasConcurrency.getLimiter();
+                // Acquire a listener from the limiter
         Optional<Limiter.Listener> listener = limiter.acquire(null);
         logger.info("listener is present :{} ", listener.isPresent());
         // Proceed with the method execution if listener is present
@@ -84,11 +87,15 @@ public class VegasConcurrencyLimiterAspect {
                 Object result = joinPoint.proceed();
                 listener.get().onSuccess();
                 return result;
-            } catch (Throwable throwable) {
+            } catch (UncheckedTimeoutException e) {
                 listener.get().onDropped();
+            } catch (RejectedExecutionException e) {
+                // TODO: Remove support for RejectedExecutionException here.
+                listener.get().onDropped();
+            } catch (Throwable throwable) {
+                listener.get().onIgnore();
                 // Invoke fallback method in case of failure
-               return  invokeFallback(joinPoint, method, vegasConcurrencyLimiter.fallbackMethod(), throwable);
-
+                throw throwable;
             }
         }
         return    invokeFallback(joinPoint, method, vegasConcurrencyLimiter.fallbackMethod(), new VegasConcurrentFullException(backend));
