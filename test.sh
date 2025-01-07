@@ -1,7 +1,19 @@
 #!/bin/bash
 
+# Check if the URL, number of requests, and number of parallel processes are passed as parameters
+if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ]; then
+  echo "Usage: $0 <url> <number_of_requests> <parallel_processes>"
+  exit 1
+fi
+
 # The URL you want to call
-url="http://localhost:6060/test"
+url="$1"
+
+# The number of requests to generate
+num_requests="$2"
+
+# The number of parallel processes to run
+parallel_processes="$3"
 
 # Function to make a single request
 make_request() {
@@ -22,5 +34,5 @@ make_request() {
 export -f make_request
 export url
 
-# Generate 1000 numbers and pass them to xargs to run 20 concurrent requests
-seq 10000 | xargs -n1 -P20 bash -c 'make_request'
+# Generate numbers and pass them to xargs to run the specified number of parallel requests
+seq "$num_requests" | xargs -n1 -P"$parallel_processes" bash -c 'make_request'
