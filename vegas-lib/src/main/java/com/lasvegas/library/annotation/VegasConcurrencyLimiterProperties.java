@@ -178,42 +178,7 @@ public class VegasConcurrencyLimiterProperties {
         return builder.build();
     }
 
-    public VegasLimit createBasicVegasLimit(  VegasLimit.Builder builder,
-                                         InstanceProperties properties ){
 
-
-        if (properties != null) {
-
-
-            if (properties.getInitialLimit() != null) {
-                builder.initialLimit(properties.getInitialLimit());
-            }
-
-            if (properties.getMaxConcurrency() != null) {
-                builder.maxConcurrency(properties.getMaxConcurrency());
-            }
-
-            if (properties.getSmoothing() != null) {
-                builder.smoothing(properties.getSmoothing());
-            }
-
-            if (properties.getAlpha() != null) {
-                builder.beta(properties.getAlpha());
-            }
-
-            if (properties.getBeta() != null) {
-                builder.beta(properties.getBeta());
-            }
-
-            if(properties.getProbeMultiplier() != null){
-                builder.probeMultiplier(properties.getProbeMultiplier());
-            }
-        }
-
-        return builder.build();
-
-
-    }
 
 
     private VegasConcurrencyConfig createBaseConfig(String instanceName,
@@ -267,7 +232,7 @@ public class VegasConcurrencyLimiterProperties {
             }
 
             if (properties.getAlpha() != null) {
-                builder.beta(properties.getAlpha());
+                builder.alpha(properties.getAlpha());
             }
 
             if (properties.getBeta() != null) {

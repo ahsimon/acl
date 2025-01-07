@@ -21,7 +21,7 @@ public class AnnotatedConcurrencyLimiterController {
 
 
         return Mono.fromCallable(() -> {
-            Thread.sleep(1000); // Simulate delay
+            Thread.sleep(2000); // Simulate delay
             long executionTime = System.currentTimeMillis() - initTime;
 
             return ResponseEntity.ok("Request processed ok!! in " + executionTime);

@@ -40,11 +40,12 @@ public class VegasConcurrencyLimiterRegistry {
     public VegasConcurrency getVegasConcurrency(String name) {
         // Attempt to retrieve the limiter from the map
         return limiterMap.computeIfAbsent(name, this::createDefaultLimiter);
+
     }
 
 
     private VegasConcurrency createDefaultLimiter(String name) {
-
+        logger.info("createDefaultLimiter for {}",name);
         // Retrieve properties configuration for the specified limiter name
         VegasConcurrencyConfig config = this.properties.createVegasConcurrencyConfig(name, this.properties.findVegasProperties(name));
         VegasLimit vegasLimit =  this.properties.createVegasConcurrencyLimit(VegasLimit.newBuilder(), config, this.properties.findVegasProperties(name) );
@@ -53,7 +54,7 @@ public class VegasConcurrencyLimiterRegistry {
         SimpleLimiter<Void> limiter = SimpleLimiter.newBuilder()
                 .limit(vegasLimit)
                 .build();
-        return new VegasConcurrency(name,limiter,config);
+        return new VegasConcurrency(name,limiter,config,vegasLimit);
     }
 
 }

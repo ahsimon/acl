@@ -78,7 +78,10 @@ public class VegasConcurrencyLimiterAspect {
         SimpleLimiter<Void> limiter = vegasConcurrency.getLimiter();
                 // Acquire a listener from the limiter
         Optional<Limiter.Listener> listener = limiter.acquire(null);
-       // logger.info("listener is present :{} ", listener.isPresent());
+        logger.info("listener is present :{} ", listener.isPresent());
+        logger.info("limit -> {}", vegasConcurrency.getLimit());
+        logger.info("limiter.getInflight() -> {}", limiter.getInflight());
+        logger.info("limiter.getLimit() -> {}", limiter.getLimit());
         // Proceed with the method execution if listener is present
         if (listener.isPresent()) {
 
@@ -86,6 +89,7 @@ public class VegasConcurrencyLimiterAspect {
             try {
                 Object result = joinPoint.proceed();
                 listener.get().onSuccess();
+
                 return result;
             } catch (UncheckedTimeoutException e) {
                 listener.get().onDropped();
@@ -98,7 +102,8 @@ public class VegasConcurrencyLimiterAspect {
                 throw throwable;
             }
         }
-        return    invokeFallback(joinPoint, method, vegasConcurrencyLimiter.fallbackMethod(), new VegasConcurrentFullException(backend));
+        return invokeFallback(joinPoint, method, vegasConcurrencyLimiter.fallbackMethod(), new VegasConcurrentFullException(backend));
+
     }
 
 
