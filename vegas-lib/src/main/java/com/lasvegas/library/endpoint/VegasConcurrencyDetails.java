@@ -1,14 +1,23 @@
 package com.lasvegas.library.endpoint;
 
-public class VegasConcurrencyDetails {
 
+import java.io.Serializable;
+
+/*
+    ///In-flight Requests (IFR): Number of requests that are currently being processed
+   If IFR < CL, request is allowed and IFR is incremented by 1
+    If IFR == CL, request is rejected
+ */
+public class VegasConcurrencyDetails implements Serializable {
+
+
+    //Concurrency Limit (CL): Current concurrency limit value
     int currentLimit;
+
+
     int initialLimit;
     int maxLimit;
-    double smoothing;
-
-
-
+    String limit;
 
     public int getCurrentLimit() {
         return currentLimit;
@@ -18,8 +27,13 @@ public class VegasConcurrencyDetails {
         this.currentLimit = currentLimit;
     }
 
+
     public int getInitialLimit() {
         return initialLimit;
+    }
+
+    public void setInitialLimit(int initialLimit) {
+        this.initialLimit = initialLimit;
     }
 
     public int getMaxLimit() {
@@ -30,16 +44,11 @@ public class VegasConcurrencyDetails {
         this.maxLimit = maxLimit;
     }
 
-    public void setInitialLimit(int initialLimit) {
-        this.initialLimit = initialLimit;
+    public String getLimit() {
+        return limit;
     }
 
-
-    public double getSmoothing() {
-        return smoothing;
-    }
-
-    public void setSmoothing(double smoothing) {
-        this.smoothing = smoothing;
+    public void setLimit(String limit) {
+        this.limit = limit;
     }
 }

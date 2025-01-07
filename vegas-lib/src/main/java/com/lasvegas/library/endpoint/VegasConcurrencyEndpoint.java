@@ -3,22 +3,24 @@ import com.lasvegas.library.annotation.VegasConcurrencyLimiterRegistry;
 import com.lasvegas.library.annotation.configure.VegasConcurrencyConfig;
 import com.lasvegas.library.core.VegasConcurrency;
 
+import com.netflix.concurrency.limits.Limiter;
 import com.netflix.concurrency.limits.limiter.SimpleLimiter;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
-import org.springframework.stereotype.Component;
 
 
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Endpoint(id = "vegaslimiters")
 public class VegasConcurrencyEndpoint {
 
-
+    private static final Logger logger = LoggerFactory.getLogger(VegasConcurrencyEndpoint.class);
 
     private final VegasConcurrencyLimiterRegistry vegasConcurrencyLimiterRegistry;
 
@@ -38,14 +40,13 @@ public class VegasConcurrencyEndpoint {
 
 
     private VegasConcurrencyDetails createVegasConcurrencyDetails(VegasConcurrency vegasConcurrency) {
-
+        VegasConcurrencyDetails vegasConcurrencyDetails = new VegasConcurrencyDetails();
         VegasConcurrencyConfig config = vegasConcurrency.getConfig();
         SimpleLimiter<Void> limiter = vegasConcurrency.getLimiter();
-        VegasConcurrencyDetails vegasConcurrencyDetails = new VegasConcurrencyDetails();
+        vegasConcurrencyDetails.setInitialLimit(config.getInitialLimit());
         vegasConcurrencyDetails.setCurrentLimit(limiter.getLimit());
         vegasConcurrencyDetails.setMaxLimit(config.getMaxConcurrency());
-        vegasConcurrencyDetails.setInitialLimit(config.getInitialLimit());
-        vegasConcurrencyDetails.setSmoothing(config.getSmoothing());
+        vegasConcurrencyDetails.setLimit(vegasConcurrency.getLimit().toString());
         return vegasConcurrencyDetails;
     }
 
